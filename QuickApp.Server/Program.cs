@@ -196,6 +196,14 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrdersService, OrdersService>();
 
+// Order Service HTTP Client (decomposed microservice)
+builder.Services.AddHttpClient<QuickApp.Server.Services.OrderService.OrderServiceHttpClient>(client =>
+{
+    var orderServiceUrl = builder.Configuration["Services:OrderServiceUrl"] ?? "http://localhost:5003";
+    client.BaseAddress = new Uri(orderServiceUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
 // Other Services
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IUserIdAccessor, UserIdAccessor>();
