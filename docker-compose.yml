@@ -1,0 +1,44 @@
+version: '3.8'
+
+# Usage: Copy .env.example to .env and set POSTGRES_PASSWORD before running.
+# Example: docker compose up --build
+
+services:
+  monolith:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - order-service
+      - postgres
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:5000
+      Services__OrderServiceUrl: http://order-service:5003
+
+  order-service:
+    build:
+      context: ../microservices/src
+      dockerfile: Services/Order/Order.API/Dockerfile
+    ports:
+      - "5003:5003"
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
