@@ -1,10 +1,4 @@
-﻿// ---------------------------------------
-// Email: quickapp@ebenmonney.com
-// Templates: www.ebenmonney.com/templates
-// (c) 2024 www.ebenmonney.com/mit-license
-// ---------------------------------------
-
-namespace QuickApp.Core.Models.Shop
+namespace OrderService.Models
 {
     public class OrderDetail : BaseEntity
     {
@@ -13,7 +7,6 @@ namespace QuickApp.Core.Models.Shop
         public decimal Discount { get; set; }
 
         public int ProductId { get; set; }
-        public required Product Product { get; set; }
 
         public int OrderId { get; set; }
         public required Order Order { get; set; }

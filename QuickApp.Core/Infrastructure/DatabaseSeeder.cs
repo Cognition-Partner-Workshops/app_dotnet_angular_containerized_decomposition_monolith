@@ -176,42 +176,6 @@ namespace QuickApp.Core.Infrastructure
                     ProductCategory = prodCat_1
                 };
 
-                var ordr_1 = new Order
-                {
-                    Discount = 500,
-                    Cashier = await dbContext.Users.OrderBy(u => u.UserName).FirstAsync(),
-                    Customer = cust_1
-                };
-
-                var ordr_2 = new Order
-                {
-                    Cashier = await dbContext.Users.OrderBy(u => u.UserName).FirstAsync(),
-                    Customer = cust_2
-                };
-
-                ordr_1.OrderDetails.Add(new()
-                {
-                    UnitPrice = prod_1.SellingPrice,
-                    Quantity = 1,
-                    Product = prod_1,
-                    Order = ordr_1
-                });
-                ordr_1.OrderDetails.Add(new()
-                {
-                    UnitPrice = prod_2.SellingPrice,
-                    Quantity = 1,
-                    Product = prod_2,
-                    Order = ordr_1
-                });
-
-                ordr_2.OrderDetails.Add(new()
-                {
-                    UnitPrice = prod_2.SellingPrice,
-                    Quantity = 1,
-                    Product = prod_2,
-                    Order = ordr_2
-                });
-
                 dbContext.Customers.Add(cust_1);
                 dbContext.Customers.Add(cust_2);
                 dbContext.Customers.Add(cust_3);
@@ -219,9 +183,6 @@ namespace QuickApp.Core.Infrastructure
 
                 dbContext.Products.Add(prod_1);
                 dbContext.Products.Add(prod_2);
-
-                dbContext.Orders.Add(ordr_1);
-                dbContext.Orders.Add(ordr_2);
 
                 await dbContext.SaveChangesAsync();
 

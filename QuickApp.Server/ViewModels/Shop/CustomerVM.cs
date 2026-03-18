@@ -18,7 +18,6 @@ namespace QuickApp.Server.ViewModels.Shop
         public string? City { get; set; }
         public string? Gender { get; set; }
 
-        public ICollection<OrderVM>? Orders { get; set; }
     }
 
     public class CustomerViewModelValidator : AbstractValidator<CustomerVM>

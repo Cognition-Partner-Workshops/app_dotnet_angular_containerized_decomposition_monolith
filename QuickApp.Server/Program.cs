@@ -194,7 +194,6 @@ builder.Services.AddScoped<IUserAccountService, UserAccountService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<IOrdersService, OrdersService>();
 
 // Other Services
 builder.Services.AddScoped<IEmailSender, EmailSender>();

@@ -5,7 +5,6 @@
 // ---------------------------------------
 
 using Microsoft.AspNetCore.Identity;
-using QuickApp.Core.Models.Shop;
 
 namespace QuickApp.Core.Models.Account
 {
@@ -44,10 +43,5 @@ namespace QuickApp.Core.Models.Account
         /// Navigation property for the claims this user possesses.
         /// </summary>
         public ICollection<IdentityUserClaim<string>> Claims { get; } = [];
-
-        /// <summary>
-        /// Demo Navigation property for orders this user has processed
-        /// </summary>
-        public ICollection<Order> Orders { get; } = [];
     }
 }

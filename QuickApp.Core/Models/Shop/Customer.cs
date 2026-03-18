@@ -15,6 +15,5 @@ namespace QuickApp.Core.Models.Shop
         public string? City { get; set; }
         public Gender Gender { get; set; }
 
-        public ICollection<Order> Orders { get; } = [];
     }
 }

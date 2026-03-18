@@ -24,6 +24,5 @@ namespace QuickApp.Core.Models.Shop
         public required ProductCategory ProductCategory { get; set; }
 
         public ICollection<Product> Children { get; } = [];
-        public ICollection<OrderDetail> OrderDetails { get; } = [];
     }
 }
