@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "${MSSQL_SA_PASSWORD:-YourStrong!Passw0rd}"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+    networks:
+      - quickapp-network
+
+  quickapp-server:
+    build:
+      context: .
+      dockerfile: QuickApp.Server/Dockerfile
+    ports:
+      - "5225:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=QuickApp;User Id=sa;Password=${MSSQL_SA_PASSWORD:-YourStrong!Passw0rd};TrustServerCertificate=true;MultipleActiveResultSets=true
+      - ProductCatalogApi__BaseUrl=http://productcatalog-api:8080
+    depends_on:
+      - sqlserver
+      - productcatalog-api
+    networks:
+      - quickapp-network
+
+  productcatalog-api:
+    build:
+      context: .
+      dockerfile: ProductCatalog.API/Dockerfile
+    ports:
+      - "5100:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ProductCatalogConnection=Server=sqlserver;Database=QuickApp;User Id=sa;Password=${MSSQL_SA_PASSWORD:-YourStrong!Passw0rd};TrustServerCertificate=true;MultipleActiveResultSets=true
+    depends_on:
+      - sqlserver
+    networks:
+      - quickapp-network
+
+volumes:
+  sqldata:
+
+networks:
+  quickapp-network:
+    driver: bridge

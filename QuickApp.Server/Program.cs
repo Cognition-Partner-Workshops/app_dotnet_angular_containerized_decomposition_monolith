@@ -193,7 +193,12 @@ builder.Services.Configure<AppSettings>(builder.Configuration);
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddHttpClient<IProductService, ProductService>(client =>
+{
+    var baseUrl = builder.Configuration["ProductCatalogApi:BaseUrl"]
+        ?? throw new InvalidOperationException("ProductCatalogApi:BaseUrl configuration is missing.");
+    client.BaseAddress = new Uri(baseUrl);
+});
 builder.Services.AddScoped<IOrdersService, OrdersService>();
 
 // Other Services
