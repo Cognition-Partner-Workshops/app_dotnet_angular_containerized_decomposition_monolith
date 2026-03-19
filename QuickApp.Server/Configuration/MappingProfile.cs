@@ -51,9 +51,6 @@ namespace QuickApp.Server.Configuration
             CreateMap<IdentityRoleClaim<string>, PermissionVM>()
                 .ConvertUsing(s => ((PermissionVM)ApplicationPermissions.GetPermissionByValue(s.ClaimValue))!);
 
-            CreateMap<Customer, CustomerVM>()
-                .ReverseMap();
-
             CreateMap<Product, ProductVM>()
                 .ReverseMap();
 

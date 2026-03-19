@@ -105,48 +105,9 @@ namespace QuickApp.Core.Infrastructure
 
         private async Task SeedDemoDataAsync()
         {
-            if (!await dbContext.Customers.AnyAsync() && !await dbContext.ProductCategories.AnyAsync())
+            if (!await dbContext.ProductCategories.AnyAsync())
             {
                 logger.LogInformation("Seeding demo data");
-
-                var cust_1 = new Customer
-                {
-                    Name = "Ebenezer Monney",
-                    Email = "contact@ebenmonney.com",
-                    Gender = Gender.Male
-                };
-
-                var cust_2 = new Customer
-                {
-                    Name = "Itachi Uchiha",
-                    Email = "uchiha@narutoverse.com",
-                    PhoneNumber = "+81123456789",
-                    Address = "Some fictional Address, Street 123, Konoha",
-                    City = "Konoha",
-                    Gender = Gender.Male
-                };
-
-                var cust_3 = new Customer
-                {
-                    Name = "John Doe",
-                    Email = "johndoe@anonymous.com",
-                    PhoneNumber = "+18585858",
-                    Address = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.
-                    Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at elementum imperdiet",
-                    City = "Lorem Ipsum",
-                    Gender = Gender.Male
-                };
-
-                var cust_4 = new Customer
-                {
-                    Name = "Jane Doe",
-                    Email = "Janedoe@anonymous.com",
-                    PhoneNumber = "+18585858",
-                    Address = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio.
-                    Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at elementum imperdiet",
-                    City = "Lorem Ipsum",
-                    Gender = Gender.Male
-                };
 
                 var prodCat_1 = new ProductCategory
                 {
@@ -180,13 +141,13 @@ namespace QuickApp.Core.Infrastructure
                 {
                     Discount = 500,
                     Cashier = await dbContext.Users.OrderBy(u => u.UserName).FirstAsync(),
-                    Customer = cust_1
+                    CustomerId = 1
                 };
 
                 var ordr_2 = new Order
                 {
                     Cashier = await dbContext.Users.OrderBy(u => u.UserName).FirstAsync(),
-                    Customer = cust_2
+                    CustomerId = 2
                 };
 
                 ordr_1.OrderDetails.Add(new()
@@ -211,11 +172,6 @@ namespace QuickApp.Core.Infrastructure
                     Product = prod_2,
                     Order = ordr_2
                 });
-
-                dbContext.Customers.Add(cust_1);
-                dbContext.Customers.Add(cust_2);
-                dbContext.Customers.Add(cust_3);
-                dbContext.Customers.Add(cust_4);
 
                 dbContext.Products.Add(prod_1);
                 dbContext.Products.Add(prod_2);

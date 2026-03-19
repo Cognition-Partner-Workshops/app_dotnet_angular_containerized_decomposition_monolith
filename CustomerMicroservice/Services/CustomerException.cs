@@ -1,10 +1,4 @@
-﻿// ---------------------------------------
-// Email: quickapp@ebenmonney.com
-// Templates: www.ebenmonney.com/templates
-// (c) 2024 www.ebenmonney.com/mit-license
-// ---------------------------------------
-
-namespace QuickApp.Core.Services.Shop
+namespace CustomerMicroservice.Services
 {
     /// <summary>
     /// Represents errors that occur with customer related operations.

@@ -1,12 +1,6 @@
-﻿// ---------------------------------------
-// Email: quickapp@ebenmonney.com
-// Templates: www.ebenmonney.com/templates
-// (c) 2024 www.ebenmonney.com/mit-license
-// ---------------------------------------
-
 using FluentValidation;
 
-namespace QuickApp.Server.ViewModels.Shop
+namespace CustomerMicroservice.ViewModels
 {
     public class CustomerVM
     {
@@ -17,8 +11,6 @@ namespace QuickApp.Server.ViewModels.Shop
         public string? Address { get; set; }
         public string? City { get; set; }
         public string? Gender { get; set; }
-
-        public ICollection<OrderVM>? Orders { get; set; }
     }
 
     public class CustomerViewModelValidator : AbstractValidator<CustomerVM>

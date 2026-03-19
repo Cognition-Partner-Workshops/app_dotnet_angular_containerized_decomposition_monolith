@@ -16,8 +16,6 @@ namespace QuickApp.Core.Infrastructure
     public class ApplicationDbContext(DbContextOptions options, IUserIdAccessor userIdAccessor) :
         IdentityDbContext<ApplicationUser, ApplicationRole, string>(options)
     {
-        public DbSet<Customer> Customers { get; set; }
-
         public DbSet<ProductCategory> ProductCategories { get; set; }
 
         public DbSet<Product> Products { get; set; }
@@ -57,13 +55,6 @@ namespace QuickApp.Core.Infrastructure
                 .HasForeignKey(r => r.RoleId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<Customer>().Property(c => c.Name).IsRequired().HasMaxLength(100);
-            builder.Entity<Customer>().HasIndex(c => c.Name);
-            builder.Entity<Customer>().Property(c => c.Email).HasMaxLength(100);
-            builder.Entity<Customer>().Property(c => c.PhoneNumber).IsUnicode(false).HasMaxLength(30);
-            builder.Entity<Customer>().Property(c => c.City).HasMaxLength(50);
-            builder.Entity<Customer>().ToTable($"{tablePrefix}{nameof(Customers)}");
 
             builder.Entity<ProductCategory>().Property(p => p.Name).IsRequired().HasMaxLength(100);
             builder.Entity<ProductCategory>().Property(p => p.Description).HasMaxLength(500);
