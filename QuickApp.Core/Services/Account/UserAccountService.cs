@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using QuickApp.Core.Infrastructure;
 using QuickApp.Core.Models.Account;
+using QuickApp.Core.Services.Shop;
 
 namespace QuickApp.Core.Services.Account
 {
@@ -15,11 +16,14 @@ namespace QuickApp.Core.Services.Account
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IShopServiceClient _shopServiceClient;
 
-        public UserAccountService(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public UserAccountService(ApplicationDbContext context, UserManager<ApplicationUser> userManager,
+            IShopServiceClient shopServiceClient)
         {
             _context = context;
             _userManager = userManager;
+            _shopServiceClient = shopServiceClient;
         }
 
         public async Task<ApplicationUser?> GetUserByIdAsync(string userId)
@@ -189,8 +193,15 @@ namespace QuickApp.Core.Services.Account
         {
             var errors = new List<string>();
 
-            if (await _context.Orders.Where(o => o.CashierId == userId).AnyAsync())
-                errors.Add("User has associated orders");
+            try
+            {
+                if (await _shopServiceClient.HasOrdersByCashierAsync(userId))
+                    errors.Add("User has associated orders");
+            }
+            catch (HttpRequestException)
+            {
+                errors.Add("Unable to verify order associations - Shop service unavailable");
+            }
 
             //canDelete = !await ; //Do other tests...
 

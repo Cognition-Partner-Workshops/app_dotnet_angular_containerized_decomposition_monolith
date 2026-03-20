@@ -7,10 +7,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using QuickApp.Core.Models.Account;
-using QuickApp.Core.Models.Shop;
 using QuickApp.Core.Services.Account;
 using QuickApp.Server.ViewModels.Account;
-using QuickApp.Server.ViewModels.Shop;
 
 namespace QuickApp.Server.Configuration
 {
@@ -50,15 +48,6 @@ namespace QuickApp.Server.Configuration
 
             CreateMap<IdentityRoleClaim<string>, PermissionVM>()
                 .ConvertUsing(s => ((PermissionVM)ApplicationPermissions.GetPermissionByValue(s.ClaimValue))!);
-
-            CreateMap<Customer, CustomerVM>()
-                .ReverseMap();
-
-            CreateMap<Product, ProductVM>()
-                .ReverseMap();
-
-            CreateMap<Order, OrderVM>()
-                .ReverseMap();
         }
     }
 }

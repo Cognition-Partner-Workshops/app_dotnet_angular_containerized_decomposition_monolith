@@ -14,6 +14,7 @@ export const environment: Environment = {
   production: false,
   baseUrl: 'https://localhost:7085', // API Server url
   fallbackBaseUrl: 'https://quickapp.ebenmonney.com', // Fallback API Server for development without local API server
+  shopApiBaseUrl: 'http://localhost:5001', // Shop microservice API url
 };
 
 /*

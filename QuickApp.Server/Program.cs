@@ -192,9 +192,13 @@ builder.Services.Configure<AppSettings>(builder.Configuration);
 // Business Services
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
-builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<IOrdersService, OrdersService>();
+// Shop services have been extracted to the ShopService microservice.
+// Register the HTTP client for inter-service communication.
+builder.Services.AddHttpClient<IShopServiceClient, ShopServiceHttpClient>(client =>
+{
+    var shopServiceUrl = builder.Configuration["ShopService:BaseUrl"] ?? "http://localhost:5001";
+    client.BaseAddress = new Uri(shopServiceUrl);
+});
 
 // Other Services
 builder.Services.AddScoped<IEmailSender, EmailSender>();

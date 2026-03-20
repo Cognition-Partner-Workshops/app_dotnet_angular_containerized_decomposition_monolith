@@ -8,4 +8,5 @@ export interface Environment {
   production: boolean;
   baseUrl?: string | null;
   fallbackBaseUrl?: string | null;
+  shopApiBaseUrl?: string | null;
 }

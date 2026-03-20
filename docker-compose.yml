@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+
+  monolith:
+    build:
+      context: .
+      dockerfile: QuickApp.Server/Dockerfile
+    ports:
+      - "7085:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=QuickApp;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true"
+      ShopService__BaseUrl: "http://shopservice:8080"
+    depends_on:
+      - sqlserver
+
+  shopservice:
+    build:
+      context: ./ShopService
+      dockerfile: Dockerfile
+    ports:
+      - "5001:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=QuickApp_ShopService;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true"
+      Authentication__Authority: "http://monolith:8080"
+    depends_on:
+      - sqlserver
+      - monolith
+
+volumes:
+  sqlserver-data:
