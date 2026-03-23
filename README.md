@@ -272,14 +272,96 @@ Follow the exact patterns from UserAccountController and UserRoleController exam
 
 ---
 
+## Architecture — Microservice Decomposition
+
+This repository demonstrates a **monolith-to-microservices decomposition** pattern. The Product Catalog domain has been extracted into a standalone microservice while the monolith retains ownership of Customers, Orders, Users, and Roles.
+
+### Repository Structure
+
+```
+QuickApp/
+├── QuickApp.Server/              # Monolith — ASP.NET Core 10 Web API + Angular host
+├── QuickApp.Core/                # Monolith — Shared data access and domain logic
+├── quickapp.client/              # Angular 21 SPA
+├── ProductCatalogService/        # NEW — Product Catalog Microservice
+│   ├── Controllers/              #   ProductsController, ProductCategoriesController
+│   ├── Infrastructure/           #   ProductCatalogDbContext
+│   ├── Models/                   #   Product, ProductCategory, BaseEntity
+│   ├── Services/                 #   IProductService / ProductService
+│   ├── Dockerfile                #   Containerized deployment
+│   ├── Program.cs                #   Startup, DI, seed data
+│   └── appsettings.json          #   Connection string config
+├── ai-rules/                     # AI development patterns and guidelines
+└── QuickApp.sln                  # Solution file (includes both projects)
+```
+
+### Domain Ownership
+
+| Domain | Owner | Database |
+|--------|-------|----------|
+| **Products & Categories** | `ProductCatalogService` (port 7090) | `QuickApp_ProductCatalog` |
+| **Customers, Orders, Users, Roles** | Monolith `QuickApp.Server` (port 7085) | `QuickApp` |
+
+### How the Monolith Communicates with the Product Catalog Microservice
+
+- The monolith's `OrderDetail` entity stores `ProductId` (plain integer) and a denormalized `ProductName` — **no foreign key constraint** to the Product table.
+- When the monolith needs product details, it uses `ProductCatalogApiClient` (an `HttpClient` wrapper) to call the microservice's REST API.
+- The base URL is configured in `appsettings.json` under `ProductCatalogService:BaseUrl`.
+- The Angular frontend has a `productCatalogApiUrl` environment property for direct browser-to-microservice calls.
+
+### Running Both Services
+
+```bash
+# Terminal 1 — Product Catalog Microservice
+cd ProductCatalogService
+dotnet run
+# Runs on https://localhost:7090, Swagger at /swagger
+
+# Terminal 2 — Monolith
+cd QuickApp.Server
+dotnet run
+# Runs on https://localhost:7085, Swagger at /swagger
+```
+
+### Product Catalog API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/products` | List all products (includes category) |
+| `GET` | `/api/products/{id}` | Get product by ID |
+| `POST` | `/api/products` | Create a product |
+| `PUT` | `/api/products/{id}` | Update a product |
+| `DELETE` | `/api/products/{id}` | Delete a product |
+| `GET` | `/api/productcategories` | List all categories |
+| `GET` | `/api/productcategories/{id}` | Get category by ID |
+| `POST` | `/api/productcategories` | Create a category |
+| `PUT` | `/api/productcategories/{id}` | Update a category |
+| `DELETE` | `/api/productcategories/{id}` | Delete a category |
+
+### Docker
+
+The Product Catalog microservice includes a `Dockerfile` for containerized deployment:
+
+```bash
+# Build from repository root
+docker build -f ProductCatalogService/Dockerfile -t product-catalog-service .
+
+# Run
+docker run -p 8080:8080 \
+  -e ConnectionStrings__DefaultConnection="Server=host.docker.internal,1433;Database=QuickApp_ProductCatalog;User Id=sa;Password=YourPassword;TrustServerCertificate=true" \
+  product-catalog-service
+```
+
+---
+
 ## Technical Stack
 
 ### Backend
 - **ASP.NET Core 10** - Cross-platform web framework
 - **Entity Framework Core** - Code First ORM
-- **OpenIddict** - OAuth2/OIDC authentication
-- **AutoMapper** - Object-to-object mapping
-- **Swagger/OpenAPI** - API documentation
+- **OpenIddict** - OAuth2/OIDC authentication (monolith)
+- **AutoMapper** - Object-to-object mapping (monolith)
+- **Swagger/OpenAPI** - API documentation (both services)
 
 ### Frontend
 - **Angular 21** - Modern web framework
