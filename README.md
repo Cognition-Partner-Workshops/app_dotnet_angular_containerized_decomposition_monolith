@@ -272,13 +272,91 @@ Follow the exact patterns from UserAccountController and UserRoleController exam
 
 ---
 
+## System Architecture
+
+QuickApp uses a **decomposed microservice architecture** with two bounded contexts:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Angular 21 Frontend                         │
+│                      (quickapp.client/)                             │
+│  Identity/Auth UI ←→ Monolith API    Shop UI ←→ Shop Service API   │
+└────────────┬──────────────────────────────────────┬─────────────────┘
+             │                                      │
+             ▼                                      ▼
+┌────────────────────────┐         ┌────────────────────────────────┐
+│   Monolith (QuickApp)  │         │   ShopService Microservice     │
+│   Port 7085 (HTTPS)    │────────▶│   Port 5001                    │
+│                        │  HTTP   │                                │
+│  • Identity/Auth       │  call   │  • Customers                   │
+│  • User Management     │         │  • Products & Categories       │
+│  • Role Management     │         │  • Orders & Order Details      │
+│  • OpenIddict (OAuth2) │         │  • JWT Bearer validation       │
+│  • Notifications       │         │  • Swagger/OpenAPI             │
+└────────────┬───────────┘         └──────────────┬─────────────────┘
+             │                                     │
+             ▼                                     ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                     SQL Server Database(s)                        │
+│   QuickApp DB (Identity tables)    QuickApp_ShopService DB       │
+│   (or shared DB with App-prefixed tables)                        │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### Bounded Contexts
+
+| Context | Project | Responsibility |
+|---------|---------|----------------|
+| **Identity/Auth** | `QuickApp.Server` + `QuickApp.Core` | User accounts, roles, permissions, OpenIddict OAuth2 token issuance, notifications |
+| **Shop** | `ShopService/` | Customers, Products, Product Categories, Orders, Order Details |
+
+### Inter-Service Communication
+
+- The **monolith issues JWT tokens** via OpenIddict. The Shop service validates these tokens (JWT Bearer auth) without needing its own identity system.
+- When the monolith needs to check if a user has associated orders (for user deletion), it makes an **HTTP call** to the Shop service's `GET /api/order/by-cashier/{cashierId}/exists` endpoint.
+- The Angular frontend sends the **same JWT token** to both services.
+
+### Running the Full Stack
+
+**With docker-compose (recommended):**
+
+```bash
+docker-compose up
+```
+
+This starts SQL Server, the monolith (port 7085), and the Shop service (port 5001).
+
+**Locally:**
+
+```bash
+# Terminal 1: Monolith
+dotnet run --project QuickApp.Server
+
+# Terminal 2: Shop Service
+dotnet run --project ShopService/ShopService.API
+
+# Terminal 3: Angular frontend
+cd quickapp.client && npm start
+```
+
+For detailed Shop service documentation, see [ShopService/README.md](ShopService/README.md).
+
+---
+
 ## Technical Stack
 
-### Backend
+### Backend - Monolith (Identity/Auth)
 - **ASP.NET Core 10** - Cross-platform web framework
 - **Entity Framework Core** - Code First ORM
-- **OpenIddict** - OAuth2/OIDC authentication
+- **OpenIddict** - OAuth2/OIDC authentication and token issuance
 - **AutoMapper** - Object-to-object mapping
+- **Swagger/OpenAPI** - API documentation
+
+### Backend - Shop Microservice
+- **ASP.NET Core 10** - Web API framework
+- **Entity Framework Core** - ORM with SQL Server
+- **JWT Bearer Authentication** - Validates tokens from monolith
+- **AutoMapper** - Entity-to-ViewModel mapping
 - **Swagger/OpenAPI** - API documentation
 
 ### Frontend
@@ -286,6 +364,11 @@ Follow the exact patterns from UserAccountController and UserRoleController exam
 - **TypeScript** - Type-safe JavaScript
 - **Bootstrap 5** - Responsive UI framework
 - **RxJS** - Reactive programming
+
+### Infrastructure
+- **Docker** - Container runtime
+- **docker-compose** - Multi-service orchestration
+- **SQL Server 2022** - Relational database
 
 ---
 
