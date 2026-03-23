@@ -193,8 +193,15 @@ builder.Services.Configure<AppSettings>(builder.Configuration);
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrdersService, OrdersService>();
+
+// Product Catalog Microservice Client
+builder.Services.AddHttpClient<ProductCatalogApiClient>(client =>
+{
+    var baseUrl = builder.Configuration["ProductCatalogService:BaseUrl"] ?? "https://localhost:7090";
+    client.BaseAddress = new Uri(baseUrl);
+});
+builder.Services.AddScoped<IProductService, ProductService>();
 
 // Other Services
 builder.Services.AddScoped<IEmailSender, EmailSender>();

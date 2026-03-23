@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using QuickApp.Core.Models.Account;
 using QuickApp.Core.Models.Shop;
 using QuickApp.Core.Services.Account;
+using QuickApp.Core.Services.Shop;
 using QuickApp.Server.ViewModels.Account;
 using QuickApp.Server.ViewModels.Shop;
 
@@ -54,7 +55,7 @@ namespace QuickApp.Server.Configuration
             CreateMap<Customer, CustomerVM>()
                 .ReverseMap();
 
-            CreateMap<Product, ProductVM>()
+            CreateMap<ProductDto, ProductVM>()
                 .ReverseMap();
 
             CreateMap<Order, OrderVM>()

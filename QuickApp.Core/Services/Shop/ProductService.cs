@@ -6,8 +6,16 @@
 
 namespace QuickApp.Core.Services.Shop
 {
-    public class ProductService() : IProductService
+    public class ProductService(ProductCatalogApiClient apiClient) : IProductService
     {
+        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
+        {
+            return await apiClient.GetAllProductsAsync();
+        }
 
+        public async Task<ProductDto?> GetProductByIdAsync(int id)
+        {
+            return await apiClient.GetProductByIdAsync(id);
+        }
     }
 }
