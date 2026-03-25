@@ -1,10 +1,4 @@
-﻿// ---------------------------------------
-// Email: quickapp@ebenmonney.com
-// Templates: www.ebenmonney.com/templates
-// (c) 2024 www.ebenmonney.com/mit-license
-// ---------------------------------------
-
-namespace QuickApp.Core.Models.Shop
+namespace ProductCatalog.Api.Models
 {
     public class Product : BaseEntity
     {
@@ -24,6 +18,5 @@ namespace QuickApp.Core.Models.Shop
         public required ProductCategory ProductCategory { get; set; }
 
         public ICollection<Product> Children { get; } = [];
-        public ICollection<OrderDetail> OrderDetails { get; } = [];
     }
 }

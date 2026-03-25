@@ -13,7 +13,6 @@ namespace QuickApp.Core.Models.Shop
         public decimal Discount { get; set; }
 
         public int ProductId { get; set; }
-        public required Product Product { get; set; }
 
         public int OrderId { get; set; }
         public required Order Order { get; set; }
