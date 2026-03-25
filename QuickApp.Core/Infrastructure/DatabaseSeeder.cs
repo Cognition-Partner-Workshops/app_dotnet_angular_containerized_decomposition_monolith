@@ -105,7 +105,7 @@ namespace QuickApp.Core.Infrastructure
 
         private async Task SeedDemoDataAsync()
         {
-            if (!await dbContext.Customers.AnyAsync() && !await dbContext.ProductCategories.AnyAsync())
+            if (!await dbContext.Customers.AnyAsync())
             {
                 logger.LogInformation("Seeding demo data");
 
@@ -148,33 +148,7 @@ namespace QuickApp.Core.Infrastructure
                     Gender = Gender.Male
                 };
 
-                var prodCat_1 = new ProductCategory
-                {
-                    Name = "None",
-                    Description = "Default category. Products that have not been assigned a category"
-                };
-
-                var prod_1 = new Product
-                {
-                    Name = "BMW M6",
-                    Description = "Yet another masterpiece from the world's best car manufacturer",
-                    BuyingPrice = 109775,
-                    SellingPrice = 114234,
-                    UnitsInStock = 12,
-                    IsActive = true,
-                    ProductCategory = prodCat_1
-                };
-
-                var prod_2 = new Product
-                {
-                    Name = "Nissan Patrol",
-                    Description = "A true man's choice",
-                    BuyingPrice = 78990,
-                    SellingPrice = 86990,
-                    UnitsInStock = 4,
-                    IsActive = true,
-                    ProductCategory = prodCat_1
-                };
+                // Product and ProductCategory seed data now lives in the Product Catalog microservice.
 
                 var ordr_1 = new Order
                 {
@@ -191,24 +165,24 @@ namespace QuickApp.Core.Infrastructure
 
                 ordr_1.OrderDetails.Add(new()
                 {
-                    UnitPrice = prod_1.SellingPrice,
+                    UnitPrice = 114234,
                     Quantity = 1,
-                    Product = prod_1,
+                    ProductId = 1,
                     Order = ordr_1
                 });
                 ordr_1.OrderDetails.Add(new()
                 {
-                    UnitPrice = prod_2.SellingPrice,
+                    UnitPrice = 86990,
                     Quantity = 1,
-                    Product = prod_2,
+                    ProductId = 2,
                     Order = ordr_1
                 });
 
                 ordr_2.OrderDetails.Add(new()
                 {
-                    UnitPrice = prod_2.SellingPrice,
+                    UnitPrice = 86990,
                     Quantity = 1,
-                    Product = prod_2,
+                    ProductId = 2,
                     Order = ordr_2
                 });
 
@@ -216,9 +190,6 @@ namespace QuickApp.Core.Infrastructure
                 dbContext.Customers.Add(cust_2);
                 dbContext.Customers.Add(cust_3);
                 dbContext.Customers.Add(cust_4);
-
-                dbContext.Products.Add(prod_1);
-                dbContext.Products.Add(prod_2);
 
                 dbContext.Orders.Add(ordr_1);
                 dbContext.Orders.Add(ordr_2);

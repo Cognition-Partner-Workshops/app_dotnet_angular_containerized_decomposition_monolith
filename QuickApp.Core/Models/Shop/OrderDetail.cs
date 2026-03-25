@@ -13,7 +13,8 @@ namespace QuickApp.Core.Models.Shop
         public decimal Discount { get; set; }
 
         public int ProductId { get; set; }
-        public required Product Product { get; set; }
+        // Product navigation property removed — Product now lives in the Product Catalog microservice.
+        // Fetch product details from the Product Catalog API if needed.
 
         public int OrderId { get; set; }
         public required Order Order { get; set; }
