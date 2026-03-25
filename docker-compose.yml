@@ -1,0 +1,45 @@
+version: '3.8'
+
+# All secrets are sourced from a .env file (not checked into version control).
+# See .env.example for the required variables.
+
+services:
+  quickapp-server:
+    build:
+      context: .
+      dockerfile: QuickApp.Server/Dockerfile
+    ports:
+      - "7085:8080"
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - sqlserver
+
+  product-catalog-api:
+    build:
+      context: .
+      dockerfile: ProductCatalog.Api/Dockerfile
+    ports:
+      - "5100:8080"
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - sqlserver
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    env_file:
+      - .env
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+
+volumes:
+  sqlserver-data:
