@@ -272,6 +272,98 @@ Follow the exact patterns from UserAccountController and UserRoleController exam
 
 ---
 
+## Microservice Architecture: Product Catalog
+
+The Product Catalog bounded context has been extracted from the monolith into a standalone ASP.NET Core Web API microservice (`ProductCatalog.Api`).
+
+### Architecture Overview
+
+```
+┌─────────────────────┐     ┌──────────────────────────┐
+│   Angular Frontend   │────▶│   ProductCatalog.Api     │
+│  (quickapp.client)   │     │   (port 5100)            │
+│                      │────▶│  - Products CRUD         │
+│                      │     │  - Categories             │
+│                      │     │  - Own DB context          │
+│                      │     └──────────────────────────┘
+│                      │
+│                      │────▶┌──────────────────────────┐
+│                      │     │   QuickApp.Server         │
+└─────────────────────┘     │   (port 7085)             │
+                             │  - Auth (OpenIddict)      │
+                             │  - Users / Roles          │
+                             │  - Customers / Orders     │
+                             └──────────────────────────┘
+```
+
+### Running with Docker Compose
+
+1. Create a `.env` file at the repo root (see `.env.example` for required variables).
+2. Run all services:
+   ```bash
+   docker-compose up --build
+   ```
+   This starts:
+   - **quickapp-server** (monolith) on port `7085`
+   - **product-catalog-api** on port `5100`
+   - **sqlserver** on port `1433`
+
+### Running Locally (without Docker)
+
+1. **Product Catalog API:**
+   ```bash
+   # Restore and build
+   dotnet restore ProductCatalog.Api/ProductCatalog.Api.csproj
+   dotnet build ProductCatalog.Api/ProductCatalog.Api.csproj
+
+   # Run (default: http://localhost:5100)
+   dotnet run --project ProductCatalog.Api
+   ```
+
+2. **Monolith (QuickApp.Server):**
+   ```bash
+   dotnet restore QuickApp.Server/QuickApp.Server.csproj
+   dotnet run --project QuickApp.Server
+   ```
+
+3. **Angular Frontend:**
+   ```bash
+   cd quickapp.client
+   npm install
+   npm start
+   ```
+
+### Key Design Decisions
+
+- **Soft references:** `OrderDetail.ProductId` in the monolith is a plain `int` (no EF navigation property). The FK constraint has been removed via migration so the monolith database does not require Product tables.
+- **Separate databases:** Each service manages its own database context and migrations independently.
+- **No shared auth (yet):** The Product Catalog API does not enforce authentication. Adding JWT Bearer validation using the monolith's OpenIddict signing keys is a planned follow-up.
+
+### Project Structure
+
+```
+ProductCatalog.Api/
+├── Controllers/
+│   └── ProductsController.cs    # CRUD endpoints at api/products
+├── Data/
+│   ├── ProductCatalogDbContext.cs
+│   └── ProductCatalogSeeder.cs
+├── Models/
+│   ├── Product.cs
+│   ├── ProductCategory.cs
+│   ├── BaseEntity.cs
+│   └── IAuditableEntity.cs
+├── Services/
+│   ├── IProductService.cs
+│   └── ProductService.cs
+├── Migrations/                   # EF Core migrations
+├── Dockerfile
+├── Program.cs
+└── appsettings.json
+```
+
+---
+
 ## Technical Stack
 
 ### Backend
