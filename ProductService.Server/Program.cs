@@ -54,6 +54,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IProductService, ProductService.Core.Services.ProductService>();
 
 // Other Services
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserIdAccessor, UserIdAccessor>();
 
 // File Logger
