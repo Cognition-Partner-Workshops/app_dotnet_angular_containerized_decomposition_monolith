@@ -109,6 +109,7 @@ export class ConfigurationService {
 
   public baseUrl = environment.baseUrl ?? Utilities.baseUrl();
   public fallbackBaseUrl = environment.fallbackBaseUrl;
+  public productServiceUrl = environment.productServiceUrl ?? Utilities.baseUrl();
 
   private _language: string | null = null;
   private _homeUrl: string | null = null;

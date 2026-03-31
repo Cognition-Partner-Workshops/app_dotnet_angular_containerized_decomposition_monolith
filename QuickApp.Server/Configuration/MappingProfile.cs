@@ -12,6 +12,7 @@ using QuickApp.Core.Services.Account;
 using QuickApp.Server.ViewModels.Account;
 using QuickApp.Server.ViewModels.Shop;
 
+
 namespace QuickApp.Server.Configuration
 {
     public class MappingProfile : Profile
@@ -52,9 +53,6 @@ namespace QuickApp.Server.Configuration
                 .ConvertUsing(s => ((PermissionVM)ApplicationPermissions.GetPermissionByValue(s.ClaimValue))!);
 
             CreateMap<Customer, CustomerVM>()
-                .ReverseMap();
-
-            CreateMap<Product, ProductVM>()
                 .ReverseMap();
 
             CreateMap<Order, OrderVM>()

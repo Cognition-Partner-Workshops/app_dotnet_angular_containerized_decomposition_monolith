@@ -193,7 +193,6 @@ builder.Services.Configure<AppSettings>(builder.Configuration);
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrdersService, OrdersService>();
 
 // Other Services
@@ -214,6 +213,12 @@ builder.Logging.AddFile(builder.Configuration.GetSection("Logging"));
 
 //Email Templates
 EmailTemplates.Initialize(builder.Environment);
+
+// HttpClient for Product Service
+builder.Services.AddHttpClient("ProductService", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Services:ProductServiceUrl"]!);
+});
 
 var app = builder.Build();
 

@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "${MSSQL_SA_PASSWORD:-YourStrong!Passw0rd}"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+
+  quickapp:
+    build:
+      context: .
+      dockerfile: QuickApp.Server/Dockerfile
+    ports:
+      - "5225:5225"
+      - "7085:7085"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=QuickApp;User Id=sa;Password=${MSSQL_SA_PASSWORD:-YourStrong!Passw0rd};TrustServerCertificate=true;MultipleActiveResultSets=true
+      - Services__ProductServiceUrl=http://product-service:5002
+    depends_on:
+      - sqlserver
+
+  product-service:
+    build:
+      context: .
+      dockerfile: ProductService.Server/Dockerfile
+    ports:
+      - "5002:5002"
+      - "5003:5003"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ProductConnection=Server=sqlserver;Database=QuickApp_Products;User Id=sa;Password=${MSSQL_SA_PASSWORD:-YourStrong!Passw0rd};TrustServerCertificate=true;MultipleActiveResultSets=true
+      - Auth__Authority=http://quickapp:5225
+    depends_on:
+      - sqlserver
+      - quickapp
+
+volumes:
+  sqlserver-data:

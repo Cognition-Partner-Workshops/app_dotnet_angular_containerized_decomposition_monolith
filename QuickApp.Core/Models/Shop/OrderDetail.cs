@@ -12,8 +12,8 @@ namespace QuickApp.Core.Models.Shop
         public int Quantity { get; set; }
         public decimal Discount { get; set; }
 
-        public int ProductId { get; set; }
-        public required Product Product { get; set; }
+        public int ProductId { get; set; }  // Reference only, no navigation property
+        public string? ProductName { get; set; } // Denormalized
 
         public int OrderId { get; set; }
         public required Order Order { get; set; }
